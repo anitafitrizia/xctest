@@ -32,10 +32,12 @@ struct LoginView: View {
             TextField("Username", text: $username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal, 40)
+                .accessibilityIdentifier("usernameInput")
 
             SecureField("Password", text: $password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal, 40)
+                .accessibilityIdentifier("passwordInput")
 
             Button(action: {
                 handleLogin()
@@ -47,6 +49,7 @@ struct LoginView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .padding(.horizontal, 40)
+                    .accessibilityIdentifier("loginButton")
             }
         }
         .alert(isPresented: $showAlert) {
@@ -133,22 +136,7 @@ struct HomePageView: View {
                     Text("Welcome to the Home Page!")
                         .font(.largeTitle)
                         .padding()
-                    
-                    // Logout Button
-                    Button(action: {
-                        isLoggedIn = false // Set to false to navigate back to LoginView
-                    }) {
-                        Text("Logout")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                            .padding(.horizontal, 40)
-                    }
-                    
-                    Divider()
-                        .padding(.vertical)
+                        .accessibilityIdentifier("welcomePage")
                     
                     // Fetch Single User Button
                     Button(action: fetchSingleUser) {
@@ -159,6 +147,7 @@ struct HomePageView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                             .padding(.horizontal, 40)
+                            .accessibilityIdentifier("getSingleUser")
                     }
                     
                     // Display Single User
@@ -179,9 +168,11 @@ struct HomePageView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(user.firstName) \(user.lastName)")
                                         .font(.title2)
+                                        .accessibilityIdentifier("userFullName")
                                     Text(user.email)
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
+                                        .accessibilityIdentifier("userEmail")
                                 }
                             }
                         }
@@ -198,6 +189,7 @@ struct HomePageView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 40)
+                                .accessibilityIdentifier("clearSingleUser")
                         }
                     }
                     
@@ -210,6 +202,7 @@ struct HomePageView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                             .padding(.horizontal, 40)
+                            .accessibilityIdentifier("getListUsers")
                     }
                     
                     // Display List of Users
@@ -252,8 +245,25 @@ struct HomePageView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 40)
+                                .accessibilityIdentifier("clearListUsers")
                         }
                     }
+                    
+                    // Logout Button
+                    Button(action: {
+                        isLoggedIn = false // Set to false to navigate back to LoginView
+                    }) {
+                        Text("Logout")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 40)
+                    }
+                    
+                    Divider()
+                        .padding(.vertical)
                 }
             }
             .navigationTitle("Home")

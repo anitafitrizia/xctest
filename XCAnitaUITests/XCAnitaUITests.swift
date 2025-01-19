@@ -7,37 +7,88 @@
 
 import XCTest
 
+extension XCUIElement {
+    func waitAndAssertExists(timeout: TimeInterval = 5) {
+        XCTAssertTrue(self.waitForExistence(timeout: timeout), "\(self.identifier) does not exist.")
+    }
+
+    func safeTap() {
+        waitAndAssertExists()
+        tap()
+    }
+
+    func clearAndTypeText(_ text: String) {
+        waitAndAssertExists()
+        tap()
+        if let value = self.value as? String, !value.isEmpty {
+            let deleteString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count)
+            typeText(deleteString)
+        }
+        typeText(text)
+    }
+}
+
 final class XCAnitaUITests: XCTestCase {
-
+    let app = XCUIApplication()
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        continueAfterFailure = true
+        app.launch()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        // Tear down resources after each test if needed
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testFullFlowPage() throws {
+        try testLoginPage()
+        try testSingleUser()
+        try testListUsers()
     }
+    
+    func testLoginPage() throws {
+        let userNameData = "eve.holt@reqres.in"
+        let passwordData = "cityslicka"
+        
+        let usernameTextField = app.textFields["usernameInput"]
+        let passwordSecureField = app.secureTextFields["passwordInput"]
+        let loginButton = app.buttons["loginButton"]
+        let loginSuccess = app.staticTexts["welcomePage"]
 
-    @MainActor
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+        usernameTextField.clearAndTypeText(userNameData)
+        passwordSecureField.clearAndTypeText(passwordData)
+        loginButton.safeTap()
+        loginSuccess.waitAndAssertExists()
+    }
+    
+    func testSingleUser() throws {
+        let singleUserButton = app.buttons["getSingleUser"]
+        let clearSingleUserButton = app.buttons["clearSingleUser"]
+        let userFullNameLabel = app.staticTexts["userFullName"] // Assuming there's a label with the user's full name.
+        let userEmailLabel = app.staticTexts["userEmail"]
+        let expectedFullName = "Janet Weaver"
+        let expectedEmail =  "janet.weaver@reqres.in"
+        
+        singleUserButton.safeTap()
+        
+        XCTAssertTrue(userFullNameLabel.waitForExistence(timeout: 5), "User Full Name label not found.")
+        XCTAssertTrue(userEmailLabel.exists, "User Email label not found.")
+
+        XCTAssertNotNil(userFullNameLabel.label, "User Full Name should not be nil.")
+        XCTAssertNotNil(userEmailLabel.label, "User Email should not be nil.")
+
+        XCTAssertEqual(userFullNameLabel.label, expectedFullName, "User Full Name is incorrect.")
+        XCTAssertEqual(userEmailLabel.label, expectedEmail, "User Email is incorrect.")
+        
+        clearSingleUserButton.safeTap()
+    }
+    
+    func testListUsers() throws {
+        let listUsersButton = app.buttons["getListUsers"]
+        let clearListUsersButton = app.buttons["clearListUsers"]
+
+        listUsersButton.safeTap()
+        clearListUsersButton.safeTap()
     }
 }
