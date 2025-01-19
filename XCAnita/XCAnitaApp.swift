@@ -16,16 +16,3 @@ struct XCAnitaApp: App {
             }
     }
 }
-
-//struct HomePageView: View {
-//    var body: some View {
-//        VStack {
-//            Text("Welcome to the Home Page!")
-//                .font(.largeTitle)
-//                .padding()
-//            
-//            // Add more UI elements for the HomePage as needed
-//        }
-//        .navigationTitle("Home")
-//    }
-//}

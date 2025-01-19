@@ -7,10 +7,11 @@
 
 import SwiftUI
 import SwiftData
+import Foundation
 
 struct ContentView: View {
     @State private var isLoggedIn: Bool = false // Tracks whether the user is logged in
-        
+    
     var body: some View {
         if isLoggedIn {
             HomePageView(isLoggedIn: $isLoggedIn) // Show HomePageView after successful login
@@ -21,8 +22,8 @@ struct ContentView: View {
 }
 
 struct LoginView: View {
-    @State private var username: String = "" //"email": "eve.holt@reqres.in"
-    @State private var password: String = "" //"password": "cityslicka"
+    @State public var username: String = ""
+    @State private var password: String = ""
     @State private var alertMessage: String = ""
     @State private var showAlert: Bool = false
     @Binding var isLoggedIn: Bool // Binding to update login state
@@ -54,6 +55,12 @@ struct LoginView: View {
         }
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+        .onAppear {
+            if EnvironmentConfig.useMockAPI {
+                username = EnvironmentConfig.loginUsername
+                password = EnvironmentConfig.loginPassword
+            }
         }
     }
 
@@ -333,3 +340,22 @@ struct User: Codable, Identifiable {
         case lastName = "last_name"
     }
 }
+
+struct EnvironmentConfig {
+    static let useMockAPI: Bool = {
+        return ProcessInfo.processInfo.environment["USE_MOCK_API"] == "true"
+    }()
+
+    static let apiBaseUrl: String = {
+        return ProcessInfo.processInfo.environment["API_BASE_URL"] ?? ""
+    }()
+
+    static let loginUsername: String = {
+        return ProcessInfo.processInfo.environment["LOGIN_USERNAME"] ?? ""
+    }()
+
+    static let loginPassword: String = {
+        return ProcessInfo.processInfo.environment["LOGIN_PASSWORD"] ?? ""
+    }()
+}
+
