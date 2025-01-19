@@ -12,7 +12,20 @@ import SwiftData
 struct XCAnitaApp: App {
     var body: some Scene {
             WindowGroup {
-                LoginView()
+                ContentView()
             }
     }
 }
+
+//struct HomePageView: View {
+//    var body: some View {
+//        VStack {
+//            Text("Welcome to the Home Page!")
+//                .font(.largeTitle)
+//                .padding()
+//            
+//            // Add more UI elements for the HomePage as needed
+//        }
+//        .navigationTitle("Home")
+//    }
+//}
